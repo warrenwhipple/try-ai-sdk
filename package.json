@@ -9,9 +9,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "validate:fast": "pnpm typecheck && pnpm lint",
-    "validate:all": "pnpm validate:fast && pnpm build",
+    "fix:fast": "pnpm format && pnpm typecheck && pnpm lint",
+    "fix": "pnpm fix:fast && pnpm build",
     "preview": "vite preview",
     "ui": "pnpm dlx shadcn@latest"
   },
