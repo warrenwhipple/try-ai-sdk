@@ -1,4 +1,4 @@
-import React, { Suspense } from "react"
+import React, { Suspense, type JSX } from "react"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 
