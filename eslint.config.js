@@ -26,10 +26,13 @@ export default tseslint.config(
     },
   },
   {
-    /** Ignore refresh warn on shadcn components */
+    /** Ignore linting issues on shadcn UI components only */
     files: ['src/components/ui/**/*.{ts,tsx}'],
     rules: {
       'react-refresh/only-export-components': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      'prefer-const': 'off',
     },
   }
 )

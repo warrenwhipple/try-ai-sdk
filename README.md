@@ -13,12 +13,14 @@ A minimal AI chatbot built with React, TypeScript, and Vite, using Vercel's AI S
 ## Setup
 
 1. **Install dependencies:**
+
    ```bash
    pnpm install
    ```
 
 2. **Set up environment variables:**
    Create a `.env` file and add your OpenAI API key:
+
    ```
    VITE_OPENAI_API_KEY=your_openai_api_key_here
    ```

@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from 'react'
 
-import { recordAudio } from "@/lib/audio-utils"
+import { recordAudio } from '@/lib/audio-utils'
 
 interface UseAudioRecordingOptions {
   transcribeAudio?: (blob: Blob) => Promise<string>
@@ -16,7 +16,7 @@ export function useAudioRecording({
   const [isRecording, setIsRecording] = useState(false)
   const [isTranscribing, setIsTranscribing] = useState(false)
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null)
-  const activeRecordingRef = useRef<any>(null)
+  const activeRecordingRef = useRef<Promise<Blob> | null>(null)
 
   useEffect(() => {
     const checkSpeechSupport = async () => {
@@ -42,7 +42,7 @@ export function useAudioRecording({
         onTranscriptionComplete?.(text)
       }
     } catch (error) {
-      console.error("Error transcribing audio:", error)
+      console.error('Error transcribing audio:', error)
     } finally {
       setIsTranscribing(false)
       setIsListening(false)
@@ -68,7 +68,7 @@ export function useAudioRecording({
         // Start recording with the stream
         activeRecordingRef.current = recordAudio(stream)
       } catch (error) {
-        console.error("Error recording audio:", error)
+        console.error('Error recording audio:', error)
         setIsListening(false)
         setIsRecording(false)
         if (audioStream) {
