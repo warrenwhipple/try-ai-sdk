@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a React + TypeScript + Vite application with Tailwind CSS and shadcn/ui components. The project uses pnpm as the package manager.
+This is a React + TypeScript + Vite application with Tailwind CSS and shadcn/ui components. The project includes a minimal AI chatbot built with Vercel's AI SDK and OpenAI integration. The project uses pnpm as the package manager.
 
 ## Essential Commands
 
@@ -48,3 +48,9 @@ This ensures code quality, proper formatting, type safety, and that the build su
 - ESLint configured for React hooks and refresh rules
 - Prettier for consistent formatting
 - TypeScript strict mode enabled via project references
+
+### AI Integration
+- **Vercel AI SDK** for OpenAI integration (`ai` and `@ai-sdk/openai` packages)
+- **Environment variables**: `VITE_OPENAI_API_KEY` required for OpenAI API access
+- **Chat component**: `src/components/Chat.tsx` provides the main chatbot interface
+- **Model**: Currently configured to use GPT-3.5 Turbo

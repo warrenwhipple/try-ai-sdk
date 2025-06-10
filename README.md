@@ -1,11 +1,40 @@
-# React + TypeScript + Vite
+# AI Chatbot with React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A minimal AI chatbot built with React, TypeScript, and Vite, using Vercel's AI SDK for OpenAI integration.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 💬 Real-time chat interface
+- 🤖 OpenAI GPT-3.5 Turbo integration
+- ⚡ Built with Vite for fast development
+- 🎨 Styled with Tailwind CSS
+- 📱 Responsive design
+
+## Setup
+
+1. **Install dependencies:**
+   ```bash
+   pnpm install
+   ```
+
+2. **Set up environment variables:**
+   Create a `.env` file and add your OpenAI API key:
+   ```
+   VITE_OPENAI_API_KEY=your_openai_api_key_here
+   ```
+
+3. **Start development server:**
+   ```bash
+   pnpm dev
+   ```
+
+## Tech Stack
+
+- **React 19** with TypeScript
+- **Vite** for build tooling
+- **Tailwind CSS** for styling
+- **Vercel AI SDK** for OpenAI integration
+- **shadcn/ui** for UI components
 
 ## Expanding the ESLint configuration
 
