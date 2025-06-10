@@ -1,10 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import { App } from './app-temp.tsx'
+import { ChatPage } from './components/chat-page'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <ChatPage />
   </StrictMode>
 )
