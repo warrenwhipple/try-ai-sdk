@@ -24,14 +24,6 @@ This is a React + TypeScript + Vite application featuring a professional AI chat
 - `pnpm ui` - Run shadcn CLI to add/manage UI components
 - Add chat components: `pnpm ui add https://shadcn-chatbot-kit.vercel.app/r/[component].json`
 
-## Important Reminders
-
-**Always run `pnpm fix` when:**
-- You complete implementing a feature
-- Before creating any git commit
-
-This ensures code quality, proper formatting, type safety, and that the build succeeds.
-
 ## Architecture
 
 ### Build System
@@ -66,3 +58,17 @@ This ensures code quality, proper formatting, type safety, and that the build su
 - **Message handling**: Custom logic adapts AI SDK messages to chat-kit format
 - **State management**: Maintains messages, input, and loading states manually
 - **Extensible**: Ready for file attachments, audio recording, prompt suggestions
+
+## Important Reminders and Conventions
+
+### Naming Conventions
+- Use lowercase kebab case for folders and file names: `src/components/my-component.tsx`
+- Export React components by name: `export function MyComponent() { ... }`
+- Do **not** export React component as file `default`
+
+### Code Checks
+`pnpm fix` quickly runs formatting fixes and all checks in one command that bails early for faster feedback.
+**Always run `pnpm fix` when:**
+- You complete implementing a feature
+- Before creating any git commit
+

@@ -5,12 +5,12 @@ A professional AI chatbot built with React, TypeScript, and Vite, featuring a po
 ## Features
 
 - 💬 **Professional chat interface** with shadcn-chatbot-kit components
-- 🤖 **OpenAI GPT-3.5 Turbo integration** via Vercel's AI SDK  
+- 🤖 **OpenAI GPT-3.5 Turbo integration** via Vercel's AI SDK
 - ✨ **Rich message rendering** with markdown support
 - 📋 **Copy message functionality** with one-click copying
 - 🎙️ **Audio recording capabilities** (ready to extend)
 - 📎 **File attachment support** (ready to extend)
-- ⚡ **Auto-scroll and smooth animations** 
+- ⚡ **Auto-scroll and smooth animations**
 - 🎨 **Beautiful UI** with Tailwind CSS and Framer Motion
 - 📱 **Fully responsive design**
 
@@ -51,7 +51,7 @@ A professional AI chatbot built with React, TypeScript, and Vite, featuring a po
 ### Available Scripts
 
 - `pnpm dev` - Start development server
-- `pnpm build` - Build for production  
+- `pnpm build` - Build for production
 - `pnpm preview` - Preview production build
 - `pnpm lint` - Run ESLint
 - `pnpm typecheck` - Run TypeScript type checking

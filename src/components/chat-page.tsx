@@ -8,7 +8,7 @@ const openai = createOpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
 })
 
-export default function ChatPage() {
+export function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
