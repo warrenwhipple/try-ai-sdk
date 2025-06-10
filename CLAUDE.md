@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a React + TypeScript + Vite application with Tailwind CSS and shadcn/ui components. The project includes a minimal AI chatbot built with Vercel's AI SDK and OpenAI integration. The project uses pnpm as the package manager.
+This is a React + TypeScript + Vite application featuring a professional AI chatbot with shadcn-chatbot-kit components, Vercel's AI SDK, and OpenAI integration. The project uses pnpm as the package manager.
 
 ## Essential Commands
 
@@ -22,6 +22,7 @@ This is a React + TypeScript + Vite application with Tailwind CSS and shadcn/ui 
 
 ### Component Management
 - `pnpm ui` - Run shadcn CLI to add/manage UI components
+- Add chat components: `pnpm ui add https://shadcn-chatbot-kit.vercel.app/r/[component].json`
 
 ## Important Reminders
 
@@ -40,7 +41,9 @@ This ensures code quality, proper formatting, type safety, and that the build su
 
 ### UI Framework
 - **Tailwind CSS v4** integrated via Vite plugin
-- **shadcn/ui** components stored in `src/components/ui/`
+- **shadcn/ui** base components stored in `src/components/ui/`
+- **shadcn-chatbot-kit** professional chat components integrated
+- **Framer Motion** for animations and transitions
 - Component variants managed with `class-variance-authority`
 - Utility functions in `src/lib/utils.ts` for class merging
 
@@ -48,9 +51,18 @@ This ensures code quality, proper formatting, type safety, and that the build su
 - ESLint configured for React hooks and refresh rules
 - Prettier for consistent formatting
 - TypeScript strict mode enabled via project references
+- **Linting exceptions**: UI components in `src/components/ui/` have relaxed linting rules for external libraries
 
 ### AI Integration
 - **Vercel AI SDK** for OpenAI integration (`ai` and `@ai-sdk/openai` packages)
 - **Environment variables**: `VITE_OPENAI_API_KEY` required for OpenAI API access
-- **Chat component**: `src/components/Chat.tsx` provides the main chatbot interface
+- **Chat component**: `src/components/Chat.tsx` integrates AI logic with shadcn-chatbot-kit UI
 - **Model**: Currently configured to use GPT-3.5 Turbo
+- **Message types**: Uses chat-message Message interface for compatibility
+- **Features**: Supports markdown rendering, copy functionality, auto-scroll, animations
+
+### Chat Component Integration
+- **Main component**: Uses shadcn-chatbot-kit `Chat` component for professional UI
+- **Message handling**: Custom logic adapts AI SDK messages to chat-kit format
+- **State management**: Maintains messages, input, and loading states manually
+- **Extensible**: Ready for file attachments, audio recording, prompt suggestions
