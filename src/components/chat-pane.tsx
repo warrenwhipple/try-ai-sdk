@@ -2,34 +2,34 @@ import { useChat } from '@ai-sdk/react'
 import { Chat } from '@/components/ui/chat'
 import { type Message } from '@/components/ui/chat-message'
 import { useDocumentStore } from '@/lib/store'
-import { useEffect } from 'react'
+import { addItemSchema } from '@/lib/tools'
 
 export function ChatPane() {
   const addItem = useDocumentStore((state) => state.addItem)
 
   const { messages, input, handleInputChange, handleSubmit, status } = useChat({
     api: '/api/chat',
+    maxSteps: 3,
     initialMessages: [],
-    body: {
-      model: 'gpt-3.5-turbo',
+    body: { model: 'gpt-3.5-turbo' },
+    async onToolCall({ toolCall }) {
+      switch (toolCall.toolName) {
+        case 'addItem': {
+          try {
+            const args = addItemSchema.parse(toolCall.args)
+            return addItem(args.item)
+          } catch (error) {
+            return { status: 'error', message: `Invalid arguments: ${error}` }
+          }
+        }
+        default:
+          return {
+            status: 'error',
+            message: `Unknown tool: ${toolCall.toolName}`,
+          }
+      }
     },
   })
-
-  // Handle tool calls in messages
-  useEffect(() => {
-    const lastMessage = messages[messages.length - 1]
-    if (lastMessage?.role === 'assistant' && lastMessage.toolInvocations) {
-      lastMessage.toolInvocations.forEach((toolInvocation) => {
-        if (
-          toolInvocation.toolName === 'append' &&
-          toolInvocation.state === 'result' &&
-          toolInvocation.result?.value
-        ) {
-          addItem(toolInvocation.result.value)
-        }
-      })
-    }
-  }, [messages, addItem])
 
   return (
     <div className="flex flex-1 flex-col w-1/2 p-4">

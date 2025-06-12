@@ -1,6 +1,6 @@
 import { createOpenAI } from '@ai-sdk/openai'
 import { streamText, type Message } from 'ai'
-import { appendTool } from './tools'
+import { addItemTool } from './tools'
 
 export async function handleChat(req: Request) {
   const openai = createOpenAI({
@@ -14,9 +14,9 @@ export async function handleChat(req: Request) {
     model: openai('gpt-3.5-turbo'),
     messages,
     system:
-      'You are a helpful AI assistant. You can add items to a list using the append tool.',
+      'You are a helpful AI assistant. You can add items to a list using the addItem tool.',
     tools: {
-      append: appendTool,
+      addItem: addItemTool,
     },
     toolChoice: 'auto',
   })
