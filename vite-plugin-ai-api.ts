@@ -1,6 +1,6 @@
+import { Writable } from 'node:stream'
 import type { Plugin } from 'vite'
 import { loadEnv } from 'vite'
-import { handleChat } from './src/lib/ai-api'
 
 export function aiApiPlugin(): Plugin {
   return {
@@ -12,9 +12,37 @@ export function aiApiPlugin(): Plugin {
     },
     configureServer(server) {
       server.middlewares.use('/api/chat', async (req, res) => {
-        const response = await handleChat(req as unknown as Request)
-        res.writeHead(response.status, Object.fromEntries(response.headers))
-        res.end(await response.text())
+        try {
+          if (req.method !== 'POST') {
+            res.writeHead(405, { 'Content-Type': 'text/plain' })
+            res.end('Method Not Allowed')
+            return
+          }
+
+          const request = new Request(`http://localhost${req.url}`, {
+            method: req.method,
+            headers: req.headers as RequestInit['headers'],
+            body: req,
+            duplex: 'half',
+          })
+
+          const { handleChat } = await import('./src/lib/ai-api')
+          const response = await handleChat(request)
+
+          res.writeHead(response.status, Object.fromEntries(response.headers))
+
+          if (response.body) {
+            await response.body.pipeTo(Writable.toWeb(res))
+          } else {
+            res.end()
+          }
+        } catch (error) {
+          console.error('Chat API error:', error)
+          if (!res.headersSent) {
+            res.writeHead(500, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ error: 'Internal server error' }))
+          }
+        }
       })
     },
   }
