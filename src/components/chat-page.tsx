@@ -1,6 +1,7 @@
 import { useChat } from '@ai-sdk/react'
 import { Chat } from '@/components/ui/chat'
 import { type Message } from '@/components/ui/chat-message'
+import { useDocumentStore } from '@/lib/store'
 
 export function ChatPage() {
   const { messages, input, handleInputChange, handleSubmit, status } = useChat({
@@ -11,9 +12,11 @@ export function ChatPage() {
     },
   })
 
+  const { items } = useDocumentStore()
+
   return (
-    <div className="flex h-screen w-full max-w-4xl mx-auto">
-      <div className="flex flex-1 flex-col">
+    <div className="flex h-screen w-full">
+      <div className="flex flex-1 flex-col w-1/2">
         <Chat
           messages={messages as Message[]}
           input={input}
@@ -22,6 +25,15 @@ export function ChatPage() {
           isGenerating={status === 'submitted' || status === 'streaming'}
           className="flex-1"
         />
+      </div>
+      <div className="flex flex-1 items-center justify-center w-1/2 border-l">
+        <ul className="space-y-2 text-lg">
+          {items.map((item, index) => (
+            <li key={index} className="text-center">
+              {item}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   )
