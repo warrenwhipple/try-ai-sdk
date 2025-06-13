@@ -5,19 +5,21 @@ import { useDocumentStore } from '@/lib/store'
 import { addItemSchema } from '@/lib/tools'
 
 export function ChatPane() {
-  const addItem = useDocumentStore((state) => state.addItem)
-
   const { messages, input, handleInputChange, handleSubmit, status } = useChat({
     api: '/api/chat',
     maxSteps: 3,
     initialMessages: [],
-    body: { model: 'gpt-3.5-turbo' },
+    body: { model: 'o4-mini' },
     async onToolCall({ toolCall }) {
       switch (toolCall.toolName) {
         case 'addItem': {
           try {
             const args = addItemSchema.parse(toolCall.args)
-            return addItem(args.item)
+            useDocumentStore.getState().addItem(args.item)
+            return {
+              status: 'success',
+              items: useDocumentStore.getState().items,
+            }
           } catch (error) {
             return { status: 'error', message: `Invalid arguments: ${error}` }
           }
