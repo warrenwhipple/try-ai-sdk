@@ -26,11 +26,11 @@ export function AudioVisualizer({
   onClick,
 }: AudioVisualizerProps) {
   // Refs for managing audio context and animation
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const audioContextRef = useRef<AudioContext>(null)
-  const analyserRef = useRef<AnalyserNode>(null)
-  const animationFrameRef = useRef<number>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
+  const analyserRef = useRef<AnalyserNode | null>(null)
+  const animationFrameRef = useRef<number | null>(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
 
   // Cleanup function to stop visualization and close audio context
   const cleanup = () => {
