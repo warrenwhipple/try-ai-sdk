@@ -15,16 +15,11 @@ export const SyntaxHighlighter = React.memo(
     useEffect(() => {
       let cancelled = false
 
-      import("shiki").then(async ({ codeToTokens, bundledLanguages }) => {
+      import("@/lib/shiki-bundle").then(async ({ highlight }) => {
         if (cancelled) return
-        if (!(language in bundledLanguages)) return
-        const result = await codeToTokens(children, {
-          lang: language as keyof typeof bundledLanguages,
-          defaultColor: false,
-          themes: { light: "github-light", dark: "github-dark" },
-        })
+        const result = await highlight({ code: children, lang: language })
         if (cancelled) return
-        setTokens(result.tokens)
+        setTokens(result?.tokens || null)
       })
 
       return () => {
