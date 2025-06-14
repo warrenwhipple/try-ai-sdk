@@ -1,10 +1,10 @@
-import React, { Suspense, useEffect, useState, type JSX } from "react"
+import React, { Suspense, type JSX } from "react"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
-import type { ThemedToken } from "shiki"
 
 import { CopyButton } from "@/components/ui/copy-button"
 import { cn } from "@/lib/utils"
+import { SyntaxHighlighter } from "./syntax-highlighter"
 
 interface MarkdownRendererProps {
   children: string
@@ -19,70 +19,6 @@ export function MarkdownRenderer({ children }: MarkdownRendererProps) {
     </div>
   )
 }
-
-interface HighlightedPre extends React.HTMLAttributes<HTMLPreElement> {
-  children: string
-  language: string
-}
-
-const HighlightedPre = React.memo(
-  ({ children, language, ...props }: HighlightedPre) => {
-    const [tokens, setTokens] = useState<ThemedToken[][] | null>(null)
-    console.log(`Highlighting ${language}, line count: ${tokens?.length}`)
-    console.log("Token style:", tokens?.[0]?.[0]?.htmlStyle)
-
-    useEffect(() => {
-      import("shiki").then(async ({ codeToTokens, bundledLanguages }) => {
-        if (language in bundledLanguages) {
-          const result = await codeToTokens(children, {
-            lang: language as keyof typeof bundledLanguages,
-            defaultColor: false,
-            themes: {
-              light: "github-light",
-              dark: "github-dark",
-            },
-          })
-          setTokens(result.tokens)
-        }
-      })
-    }, [children, language])
-
-    if (!tokens) {
-      return <pre {...props}>{children}</pre>
-    }
-
-    return (
-      <pre {...props}>
-        <code>
-          {tokens.map((line, lineIndex) => (
-            <>
-              <span key={lineIndex}>
-                {line.map((token, tokenIndex) => {
-                  const style =
-                    typeof token.htmlStyle === "string"
-                      ? undefined
-                      : token.htmlStyle
-
-                  return (
-                    <span
-                      key={tokenIndex}
-                      className="[color:var(--shiki-light)] [background-color:var(--shiki-light-bg)] dark:[color:var(--shiki-dark)] dark:[background-color:var(--shiki-dark-bg)]"
-                      style={style}
-                    >
-                      {token.content}
-                    </span>
-                  )
-                })}
-              </span>
-              {lineIndex !== tokens.length - 1 && "\n"}
-            </>
-          ))}
-        </code>
-      </pre>
-    )
-  }
-)
-HighlightedPre.displayName = "HighlightedCode"
 
 interface CodeBlockProps extends React.HTMLAttributes<HTMLPreElement> {
   children: React.ReactNode
@@ -115,9 +51,9 @@ const CodeBlock = ({
           </pre>
         }
       >
-        <HighlightedPre language={language} className={preClass}>
+        <SyntaxHighlighter language={language} className={preClass}>
           {code}
-        </HighlightedPre>
+        </SyntaxHighlighter>
       </Suspense>
 
       <div className="invisible absolute right-2 top-2 flex space-x-1 rounded-lg p-1 opacity-0 transition-all duration-200 group-hover/code:visible group-hover/code:opacity-100">
