@@ -1,9 +1,10 @@
-import React, { Suspense, type JSX } from "react"
+import React, { Suspense, useEffect, useState, type JSX } from "react"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
+import type { ThemedToken } from "shiki"
 
-import { cn } from "@/lib/utils"
 import { CopyButton } from "@/components/ui/copy-button"
+import { cn } from "@/lib/utils"
 
 interface MarkdownRendererProps {
   children: string
@@ -25,21 +26,30 @@ interface HighlightedPre extends React.HTMLAttributes<HTMLPreElement> {
 }
 
 const HighlightedPre = React.memo(
-  async ({ children, language, ...props }: HighlightedPre) => {
-    const { codeToTokens, bundledLanguages } = await import("shiki")
+  ({ children, language, ...props }: HighlightedPre) => {
+    const [tokens, setTokens] = useState<ThemedToken[][] | null>(null)
+    console.log(`Highlighting ${language}, line count: ${tokens?.length}`)
+    console.log("Token style:", tokens?.[0]?.[0]?.htmlStyle)
 
-    if (!(language in bundledLanguages)) {
+    useEffect(() => {
+      import("shiki").then(async ({ codeToTokens, bundledLanguages }) => {
+        if (language in bundledLanguages) {
+          const result = await codeToTokens(children, {
+            lang: language as keyof typeof bundledLanguages,
+            defaultColor: false,
+            themes: {
+              light: "github-light",
+              dark: "github-dark",
+            },
+          })
+          setTokens(result.tokens)
+        }
+      })
+    }, [children, language])
+
+    if (!tokens) {
       return <pre {...props}>{children}</pre>
     }
-
-    const { tokens } = await codeToTokens(children, {
-      lang: language as keyof typeof bundledLanguages,
-      defaultColor: false,
-      themes: {
-        light: "github-light",
-        dark: "github-dark",
-      },
-    })
 
     return (
       <pre {...props}>
@@ -56,7 +66,7 @@ const HighlightedPre = React.memo(
                   return (
                     <span
                       key={tokenIndex}
-                      className="text-shiki-light bg-shiki-light-bg dark:text-shiki-dark dark:bg-shiki-dark-bg"
+                      className="[color:var(--shiki-light)] [background-color:var(--shiki-light-bg)] dark:[color:var(--shiki-dark)] dark:[background-color:var(--shiki-dark-bg)]"
                       style={style}
                     >
                       {token.content}
