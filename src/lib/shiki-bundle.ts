@@ -6,7 +6,11 @@ import {
 } from 'shiki'
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
 
-let shiki: Highlighter | null = null
+let shikiPromise: Promise<Highlighter> | null = null
+
+function isBundledLanguage(lang: string): lang is BundledLanguage {
+  return lang in bundledLanguages
+}
 
 export async function highlight({
   code,
@@ -15,20 +19,20 @@ export async function highlight({
   code: string
   lang: string
 }) {
-  if (!(lang in bundledLanguages)) return null
-  if (!shiki) {
-    const newShiki = await createHighlighter({
+  if (!isBundledLanguage(lang)) return null
+  if (!shikiPromise) {
+    shikiPromise = createHighlighter({
       langs: [lang],
       themes: ['min-dark', 'min-light'],
       engine: createJavaScriptRegexEngine({ forgiving: true }),
     })
-    if (!shiki) shiki = newShiki
   }
+  const shiki = await shikiPromise
   if (!shiki.getLoadedLanguages().includes(lang)) {
-    await shiki.loadLanguage(lang as BundledLanguage)
+    await shiki.loadLanguage(lang)
   }
   return shiki.codeToTokens(code, {
-    lang: lang as BundledLanguage,
+    lang,
     themes: { light: 'min-light', dark: 'min-dark' },
   })
 }
