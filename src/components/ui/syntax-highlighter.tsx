@@ -15,7 +15,7 @@ export const SyntaxHighlighter = React.memo(
     useEffect(() => {
       let cancelled = false
 
-      import("@/lib/shiki-bundle").then(async ({ highlight }) => {
+      import("@/lib/shiki-highlight").then(async ({ highlight }) => {
         if (cancelled) return
         const result = await highlight({ code: children, lang: language })
         if (cancelled) return

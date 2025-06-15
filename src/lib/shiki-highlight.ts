@@ -34,11 +34,13 @@ function isBundledLanguage(l: string): l is BundledLanguage {
  * heavyweight Shiki bundle is fetched only when highlighting is first needed.
  *
  * - Accepts canonical language IDs **and built-in aliases** (`js`, `ts`, …).
- * - Returns a Promise of Shiki tokens, or **`null`** when the language is not recognized.
+ * - Promise returns:
+ *   - `null` when the language is not recognized.
+ *   - `{ tokens, theme }` when the language is recognized.
  *
  * @example
  * ```tsx
- * const { highlight } = await import('@/lib/shikiHighlighter')
+ * const { highlight } = await import('@/lib/shiki-highlight')
  * const tokens = await highlight({ code, lang: 'ts' })
  * ```
  */
