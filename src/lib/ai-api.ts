@@ -19,6 +19,7 @@ export async function handleChat(req: Request) {
       addItem: addItemTool,
     },
     toolChoice: 'auto',
+    providerOptions: { openai: { reasoningEffort: 'low' } },
   })
 
   return result.toDataStreamResponse()

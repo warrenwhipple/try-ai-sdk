@@ -112,3 +112,21 @@ export default tseslint.config({
   },
 })
 ```
+
+## Hono API Server
+
+The API server for `/api/chat` now lives in `src/server/hono-server.ts` and uses [Hono](https://hono.dev/).
+
+### Running the Hono server (local development)
+
+You can run the server using a simple Node.js entry point, for example:
+
+```ts
+// server.ts
+import app from './src/server/hono-server'
+Bun.serve({ fetch: app.fetch, port: 8787 }) // or use Node/Express adapter
+```
+
+Or use your preferred deployment method for Hono (Bun, Node, Cloudflare, etc).
+
+> **Note:** The old Vite plugin server code is now deprecated and replaced by this standalone server.

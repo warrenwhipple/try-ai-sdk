@@ -6,10 +6,10 @@ import { addItemSchema } from '@/lib/tools'
 
 export function ChatPane() {
   const { messages, input, handleInputChange, handleSubmit, status } = useChat({
-    api: '/api/chat',
+    api: 'http://localhost:8787',
     maxSteps: 3,
     initialMessages: [],
-    body: { model: 'o4-mini' },
+    body: { model: 'gpt-3.5-turbo' },
     async onToolCall({ toolCall }) {
       switch (toolCall.toolName) {
         case 'addItem': {
