@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev:client": "vite",
+    "dev:server": "tsx watch src/server/server.ts",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -12,8 +13,7 @@
     "fix:fast": "pnpm format && pnpm typecheck && pnpm lint",
     "fix": "pnpm fix:fast && pnpm build",
     "preview": "vite preview",
-    "ui": "pnpm dlx shadcn@latest",
-    "dev:server": "tsx src/server/server.ts"
+    "ui": "pnpm dlx shadcn@latest"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.22",

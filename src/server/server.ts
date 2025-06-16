@@ -24,22 +24,20 @@ app.use(
 export type ChatApiBody = {
   id: string
   messages: Message[]
-  model: string
 }
 
 app.post('/', async (c) => {
   try {
     const body = (await c.req.json()) as ChatApiBody
-    console.log('body', body)
 
     const result = streamText({
-      model: openai(body.model),
+      model: openai('o4-mini'),
       system:
         'You are a helpful AI assistant. You can add items to a list using the addItem tool.',
       messages: body.messages,
       tools: { addItem: addItemTool },
       toolChoice: 'auto',
-      // providerOptions: { openai: { reasoningEffort: 'low' } },
+      providerOptions: { openai: { reasoningEffort: 'low' } },
     })
 
     // @see https://ai-sdk.dev/cookbook/api-servers/hono
