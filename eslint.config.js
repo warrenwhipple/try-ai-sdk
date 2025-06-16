@@ -27,7 +27,7 @@ export default tseslint.config(
   },
   {
     /** Ignore linting issues on shadcn UI components only */
-    files: ['src/components/ui/**/*.{ts,tsx}'],
+    files: ['src/components/{chat,ui}/**/*.{ts,tsx}'],
     rules: {
       'react-refresh/only-export-components': 'off',
       '@typescript-eslint/no-explicit-any': 'off',

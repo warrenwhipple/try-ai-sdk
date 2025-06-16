@@ -2,7 +2,7 @@ import React, { Suspense, type JSX } from "react"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 
-import { CopyButton } from "@/components/ui/copy-button"
+import { CopyButton } from "@/components/chat/copy-button"
 import { cn } from "@/lib/utils"
 import { SyntaxHighlighter } from "./syntax-highlighter"
 

@@ -1,6 +1,6 @@
 import { useChat } from '@ai-sdk/react'
-import { Chat } from '@/components/ui/chat'
-import { type Message } from '@/components/ui/chat-message'
+import { Chat } from '@/components/chat'
+import { type Message } from '@/components/chat/chat-message'
 import { useDocumentStore } from '@/lib/store'
 import { addItemSchema } from '@/lib/tools'
 
