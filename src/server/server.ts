@@ -1,8 +1,9 @@
-import 'dotenv/config'
 import { addItemTool } from '@/lib/tools'
-import { openai } from '@ai-sdk/openai'
+import { anthropic, type AnthropicProviderOptions } from '@ai-sdk/anthropic'
+import { openai, type OpenAIResponsesProviderOptions } from '@ai-sdk/openai'
 import { serve } from '@hono/node-server'
 import { streamText, type Message } from 'ai'
+import 'dotenv/config'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { stream } from 'hono/streaming'
@@ -24,20 +25,34 @@ app.use(
 export type ChatApiBody = {
   id: string
   messages: Message[]
+  provider: 'anthropic' | 'openai'
 }
 
 app.post('/', async (c) => {
   try {
     const body = (await c.req.json()) as ChatApiBody
 
+    const model =
+      body.provider === 'anthropic'
+        ? anthropic('claude-3-5-sonnet-20240620')
+        : openai.responses('o4-mini')
+
     const result = streamText({
-      model: openai('o4-mini'),
+      model,
       system:
         'You are a helpful AI assistant. You can add items to a list using the addItem tool.',
       messages: body.messages,
       tools: { addItem: addItemTool },
       toolChoice: 'auto',
-      providerOptions: { openai: { reasoningEffort: 'low' } },
+      providerOptions: {
+        anthropic: {
+          // thinking: { type: 'enabled', budgetTokens: 12000 },
+        } satisfies AnthropicProviderOptions,
+        openai: {
+          //   reasoningEffort: 'low',
+          //   reasoningSummary: 'auto',
+        } satisfies OpenAIResponsesProviderOptions,
+      },
     })
 
     // @see https://ai-sdk.dev/cookbook/api-servers/hono
@@ -47,7 +62,13 @@ app.post('/', async (c) => {
     // @see https://ai-sdk.dev/docs/troubleshooting/streaming-not-working-when-proxied
     c.header('Content-Encoding', 'none')
 
-    return stream(c, (s) => s.pipe(result.toDataStream()))
+    return stream(c, (s) =>
+      s.pipe(
+        result.toDataStream({
+          // sendReasoning: true,
+        })
+      )
+    )
   } catch (error) {
     console.error('Error in POST /:', error)
     return c.json({ error: 'Internal server error' }, 500)
