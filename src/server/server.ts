@@ -21,15 +21,16 @@ app.use(
   })
 )
 
-type Body = {
+export type ChatApiBody = {
+  id: string
   messages: Message[]
   model: string
 }
 
 app.post('/', async (c) => {
   try {
-    console.log('headers', c.req.header())
-    const body = (await c.req.json()) as Body
+    const body = (await c.req.json()) as ChatApiBody
+    console.log('body', body)
 
     const result = streamText({
       model: openai(body.model),
@@ -41,9 +42,12 @@ app.post('/', async (c) => {
       // providerOptions: { openai: { reasoningEffort: 'low' } },
     })
 
-    // Mark the response as a v1 data stream:
+    // @see https://ai-sdk.dev/cookbook/api-servers/hono
     c.header('X-Vercel-AI-Data-Stream', 'v1')
     c.header('Content-Type', 'text/plain; charset=utf-8')
+
+    // @see https://ai-sdk.dev/docs/troubleshooting/streaming-not-working-when-proxied
+    c.header('Content-Encoding', 'none')
 
     return stream(c, (s) => s.pipe(result.toDataStream()))
   } catch (error) {
