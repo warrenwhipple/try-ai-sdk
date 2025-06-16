@@ -1,4 +1,5 @@
 import { Ban, Code2, Loader2, Terminal } from "lucide-react"
+import React from "react"
 
 export type ToolInvocation = {
   state: "partial-call" | "call" | "result"
@@ -9,11 +10,11 @@ export type ToolInvocation = {
   }
 }
 
-export const ToolCall = ({
-  toolInvocations,
-}: {
+export interface ToolCallProps {
   toolInvocations?: ToolInvocation[]
-}) => {
+}
+
+export const ToolCall: React.FC<ToolCallProps> = ({ toolInvocations }) => {
   if (!toolInvocations?.length) return null
 
   return (

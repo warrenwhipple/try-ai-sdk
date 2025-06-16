@@ -5,14 +5,18 @@ import {
 } from "@/components/ui/collapsible"
 import { motion } from "framer-motion"
 import { ChevronRight } from "lucide-react"
-import { useState } from "react"
+import React, { useState } from "react"
 
 export interface ReasoningPart {
   type: "reasoning"
   reasoning: string
 }
 
-export const ReasoningBlock = ({ part }: { part: ReasoningPart }) => {
+export interface ReasoningBlockProps {
+  part: ReasoningPart
+}
+
+export const ReasoningBlock: React.FC<ReasoningBlockProps> = ({ part }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
