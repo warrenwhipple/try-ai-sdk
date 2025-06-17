@@ -1,4 +1,4 @@
-import type { Message } from "ai"
+import type { UIMessage } from "ai"
 
 import {
   ChatMessage,
@@ -6,15 +6,15 @@ import {
 } from "@/components/chat/chat-message"
 import { TypingIndicator } from "@/components/chat/typing-indicator"
 
-type AdditionalMessageOptions = Omit<ChatMessageProps, keyof Message>
+type AdditionalMessageOptions = Omit<ChatMessageProps, keyof UIMessage>
 
 interface MessageListProps {
-  messages: Message[]
+  messages: UIMessage[]
   showTimeStamps?: boolean
   isTyping?: boolean
   messageOptions?:
     | AdditionalMessageOptions
-    | ((message: Message) => AdditionalMessageOptions)
+    | ((message: UIMessage) => AdditionalMessageOptions)
 }
 
 export function MessageList({

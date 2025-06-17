@@ -1,6 +1,6 @@
 "use client"
 
-import type { Message } from "ai"
+import type { UIMessage } from "ai"
 import { cva, type VariantProps } from "class-variance-authority"
 import React, { useMemo } from "react"
 
@@ -52,7 +52,7 @@ const chatBubbleVariants = cva(
 
 type Animation = VariantProps<typeof chatBubbleVariants>["animation"]
 
-export interface ChatMessageProps extends Message {
+export interface ChatMessageProps extends UIMessage {
   showTimeStamp?: boolean
   animation?: Animation
   actions?: React.ReactNode

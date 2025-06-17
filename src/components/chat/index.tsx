@@ -5,7 +5,7 @@ import {
   useState,
   type ReactElement,
 } from "react"
-import type { Message } from "ai"
+import type { UIMessage } from "ai"
 import { ArrowDown, ThumbsDown, ThumbsUp } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -21,7 +21,7 @@ interface ChatPropsBase {
     event?: { preventDefault?: () => void },
     options?: { experimental_attachments?: FileList }
   ) => void
-  messages: Array<Message>
+  messages: Array<UIMessage>
   input: string
   className?: string
   handleInputChange: React.ChangeEventHandler<HTMLTextAreaElement>
@@ -153,7 +153,7 @@ export function Chat({
   }, [stop, setMessages, messagesRef])
 
   const messageOptions = useCallback(
-    (message: Message) => ({
+    (message: UIMessage) => ({
       actions: onRateResponse ? (
         <>
           <div className="border-r pr-1">
@@ -236,7 +236,7 @@ export function ChatMessages({
   messages,
   children,
 }: React.PropsWithChildren<{
-  messages: Message[]
+  messages: UIMessage[]
 }>) {
   const {
     containerRef,
