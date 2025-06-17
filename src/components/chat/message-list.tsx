@@ -1,7 +1,8 @@
+import type { Message } from "ai"
+
 import {
   ChatMessage,
   type ChatMessageProps,
-  type Message,
 } from "@/components/chat/chat-message"
 import { TypingIndicator } from "@/components/chat/typing-indicator"
 

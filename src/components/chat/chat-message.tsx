@@ -1,5 +1,6 @@
 "use client"
 
+import type { Message } from "ai"
 import { cva, type VariantProps } from "class-variance-authority"
 import React, { useMemo } from "react"
 
@@ -50,65 +51,6 @@ const chatBubbleVariants = cva(
 )
 
 type Animation = VariantProps<typeof chatBubbleVariants>["animation"]
-
-interface Attachment {
-  name?: string
-  contentType?: string
-  url: string
-}
-
-interface PartialToolCall {
-  state: "partial-call"
-  toolName: string
-}
-
-interface ToolCall {
-  state: "call"
-  toolName: string
-}
-
-interface ToolResult {
-  state: "result"
-  toolName: string
-  result: {
-    __cancelled?: boolean
-    [key: string]: any
-  }
-}
-
-type ToolInvocation = PartialToolCall | ToolCall | ToolResult
-
-interface ReasoningPart {
-  type: "reasoning"
-  reasoning: string
-}
-
-interface ToolInvocationPart {
-  type: "tool-invocation"
-  toolInvocation: ToolInvocation
-}
-
-interface TextPart {
-  type: "text"
-  text: string
-}
-
-// For compatibility with AI SDK types, not used
-interface SourcePart {
-  type: "source"
-}
-
-type MessagePart = TextPart | ReasoningPart | ToolInvocationPart | SourcePart
-
-export interface Message {
-  id: string
-  role: "user" | "assistant" | (string & {})
-  content: string
-  createdAt?: Date
-  experimental_attachments?: Attachment[]
-  toolInvocations?: ToolInvocation[]
-  parts?: MessagePart[]
-}
 
 export interface ChatMessageProps extends Message {
   showTimeStamp?: boolean

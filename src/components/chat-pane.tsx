@@ -1,47 +1,12 @@
-import { useChat } from '@ai-sdk/react'
 import { Chat } from '@/components/chat'
-import { type Message } from '@/components/chat/chat-message'
-import { useDocumentStore } from '@/lib/store'
-import { addItemSchema } from '@/lib/tools'
+import { useAisdkChat } from '@/hooks/useAisdkChat'
 
 export function ChatPane() {
-  const { messages, input, handleInputChange, handleSubmit, status } = useChat({
-    api: 'http://localhost:8787',
-    maxSteps: 3,
-    initialMessages: [],
-    async onToolCall({ toolCall }) {
-      switch (toolCall.toolName) {
-        case 'addItem': {
-          try {
-            const args = addItemSchema.parse(toolCall.args)
-            useDocumentStore.getState().addItem(args.item)
-            return {
-              status: 'success',
-              items: useDocumentStore.getState().items,
-            }
-          } catch (error) {
-            return { status: 'error', message: `Invalid arguments: ${error}` }
-          }
-        }
-        default:
-          return {
-            status: 'error',
-            message: `Unknown tool: ${toolCall.toolName}`,
-          }
-      }
-    },
-  })
+  const chatProps = useAisdkChat()
 
   return (
-    <div className="flex flex-1 flex-col w-1/2 p-4">
-      <Chat
-        messages={messages as Message[]}
-        input={input}
-        handleInputChange={handleInputChange}
-        handleSubmit={handleSubmit}
-        isGenerating={status === 'submitted' || status === 'streaming'}
-        className="flex-1"
-      />
+    <div className="flex flex-1 flex-col w-1/2">
+      <Chat className="flex-1" {...chatProps} />
     </div>
   )
 }

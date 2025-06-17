@@ -5,12 +5,12 @@ import {
   useState,
   type ReactElement,
 } from "react"
+import type { Message } from "ai"
 import { ArrowDown, ThumbsDown, ThumbsUp } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useAutoScroll } from "@/hooks/use-auto-scroll"
 import { Button } from "@/components/ui/button"
-import { type Message } from "@/components/chat/chat-message"
 import { CopyButton } from "@/components/chat/copy-button"
 import { MessageInput } from "@/components/chat/message-input"
 import { MessageList } from "@/components/chat/message-list"
@@ -35,12 +35,12 @@ interface ChatPropsBase {
   transcribeAudio?: (blob: Blob) => Promise<string>
 }
 
-interface ChatPropsWithoutSuggestions extends ChatPropsBase {
+export interface ChatPropsWithoutSuggestions extends ChatPropsBase {
   append?: never
   suggestions?: never
 }
 
-interface ChatPropsWithSuggestions extends ChatPropsBase {
+export interface ChatPropsWithSuggestions extends ChatPropsBase {
   append: (message: { role: "user"; content: string }) => void
   suggestions: string[]
 }
@@ -210,7 +210,7 @@ export function Chat({
       ) : null}
 
       <ChatForm
-        className="mt-auto"
+        className="mt-auto px-2 pb-1"
         isPending={isGenerating || isTyping}
         handleSubmit={handleSubmit}
       >
@@ -248,7 +248,7 @@ export function ChatMessages({
 
   return (
     <div
-      className="grid grid-cols-1 overflow-y-auto pb-4"
+      className="grid grid-cols-1 overflow-y-auto px-6 pt-6 pb-2"
       ref={containerRef}
       onScroll={handleScroll}
       onTouchStart={handleTouchStart}
