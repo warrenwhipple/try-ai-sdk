@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev:client": "vite",
+    "dev": "vite",
     "dev:server": "tsx watch src/server/server.ts",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
