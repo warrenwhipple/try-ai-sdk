@@ -1,11 +1,9 @@
 import { LoaderCircleIcon } from 'lucide-react'
 import { Textarea } from '../ui/textarea'
 import { useResponses } from './use-responses'
-import { Button } from '../ui/button'
 
 export function ResponsesChat() {
-  const { messages, streamingMessage, inputProps, isLoading, cancelRequest } =
-    useResponses()
+  const { messages, streamingMessage, inputProps, isLoading } = useResponses()
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -13,17 +11,13 @@ export function ResponsesChat() {
         {messages.map((message, index) => (
           <li key={index}>{message}</li>
         ))}
+        {isLoading && !streamingMessage && (
+          <li>
+            <LoaderCircleIcon className="animate-spin" />
+          </li>
+        )}
         {streamingMessage && <li>AI: {streamingMessage}</li>}
       </ul>
-      {isLoading && (
-        <div className="flex items-center gap-2">
-          <LoaderCircleIcon className="animate-spin" />
-          <span>Generating response...</span>
-          <Button variant="outline" onClick={cancelRequest}>
-            Cancel
-          </Button>
-        </div>
-      )}
       <Textarea {...inputProps} />
     </div>
   )

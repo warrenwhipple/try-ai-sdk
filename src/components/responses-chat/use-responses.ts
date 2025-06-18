@@ -28,7 +28,7 @@ const initialState: ResponsesState = {
   isLoading: false,
   responseId: null,
   error: null,
-  streamingMessage: '',
+  streamingMessage: null,
 }
 
 export function useResponses() {
@@ -56,52 +56,84 @@ export function useResponses() {
     }))
 
     try {
-      const stream = await getClient().responses.create({
-        model: 'o4-mini',
-        input: currentInputValue,
-        previous_response_id: currentResponseId,
-        stream: true,
-      })
+      const stream = await getClient().responses.create(
+        {
+          model: 'o4-mini',
+          input: currentInputValue,
+          previous_response_id: currentResponseId,
+          stream: true,
+        },
+        {
+          signal: abortControllerRef.current?.signal,
+        }
+      )
 
       let streamingMessage = ''
+      const eventMap = new Map<number, OpenAI.Responses.ResponseStreamEvent>()
+      let nextSequenceToProcess = 0
+      let responseCompleted = false
 
-      for await (const event of stream) {
-        if (abortControllerRef.current?.signal.aborted) break
+      const processReadyEvents = () => {
+        while (eventMap.has(nextSequenceToProcess)) {
+          const event = eventMap.get(nextSequenceToProcess)!
+          eventMap.delete(nextSequenceToProcess)
+          nextSequenceToProcess++
 
-        switch (event.type) {
-          case 'response.created': {
-            const responseId = event.response.id
-            setState((prev) => ({ ...prev, responseId }))
-            break
-          }
-          case 'response.output_text.delta': {
-            streamingMessage += event.delta
-            setState((prev) => ({ ...prev, streamingMessage }))
-            break
-          }
-          case 'response.completed': {
-            setState((prev) => ({
-              ...prev,
-              messages: [...prev.messages, `AI: ${streamingMessage}`],
-              streamingMessage: null,
-              isLoading: false,
-            }))
-            break
-          }
-          case 'error': {
-            const error = event.message || 'Unknown error'
-            setState((prev) => ({
-              ...prev,
-              isLoading: false,
-              error,
-              streamingMessage: null,
-            }))
-            break
+          switch (event.type) {
+            case 'response.created': {
+              const responseId = event.response.id
+              setState((prev) => ({ ...prev, responseId }))
+              break
+            }
+            case 'response.output_text.delta': {
+              streamingMessage += event.delta
+              setState((prev) => ({ ...prev, streamingMessage }))
+              break
+            }
+            case 'response.completed': {
+              responseCompleted = true
+              setState((prev) => ({
+                ...prev,
+                messages: [...prev.messages, `AI: ${streamingMessage}`],
+                streamingMessage: null,
+                isLoading: false,
+              }))
+              break
+            }
+            case 'error': {
+              const error = event.message || 'Unknown error'
+              setState((prev) => ({
+                ...prev,
+                isLoading: false,
+                error,
+                streamingMessage: null,
+              }))
+              break
+            }
           }
         }
       }
 
-      if (!abortControllerRef.current?.signal.aborted && streamingMessage) {
+      for await (const event of stream) {
+        if (abortControllerRef.current?.signal.aborted) break
+        eventMap.set(event.sequence_number, event)
+        processReadyEvents()
+      }
+
+      processReadyEvents()
+
+      if (eventMap.size > 0) {
+        console.warn('Unprocessed response streaming events:', {
+          remainingEvents: Array.from(eventMap.entries()),
+          nextSequenceToProcess,
+        })
+      }
+
+      if (
+        !abortControllerRef.current?.signal.aborted &&
+        streamingMessage &&
+        !responseCompleted
+      ) {
         setState((prev) => ({
           ...prev,
           messages: [...prev.messages, `AI: ${streamingMessage}`],
