@@ -1,58 +1,28 @@
-import OpenAI from 'openai'
-import { useState } from 'react'
+import { LoaderCircleIcon } from 'lucide-react'
 import { Textarea } from '../ui/textarea'
-
-const client = new OpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true,
-})
+import { useResponses } from './use-responses'
+import { Button } from '../ui/button'
 
 export function ResponsesChat() {
-  const [messages, setMessages] = useState<string[]>([])
-  const [previous_response_id, setPreviousResponseId] = useState<
-    string | undefined
-  >(undefined)
-  const [input, setInput] = useState('')
-
-  const handleSubmit = () => {
-    client.responses
-      .create({ model: 'o4-mini', input, previous_response_id })
-      .then((response) => {
-        setMessages((prev) => [...prev, `AI: ${response.output_text}`])
-        setPreviousResponseId(response.id)
-      })
-      .catch((error) => {
-        setMessages((prev) => [...prev, `Error: ${String(error)}`])
-      })
-    setMessages((prev) => [...prev, `User: ${input}`])
-    setInput('')
-  }
-
-  const handleChange: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
-    setInput(e.target.value)
-  }
-
-  const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (
-    e
-  ) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSubmit()
-    }
-  }
+  const { messages, inputProps, isLoading, cancelRequest } = useResponses()
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      <ul>
+      <ul className="flex flex-col gap-2">
         {messages.map((message, index) => (
           <li key={index}>{message}</li>
         ))}
       </ul>
-      <Textarea
-        value={input}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-      />
+      {isLoading && (
+        <div className="flex items-center gap-2">
+          <LoaderCircleIcon className="animate-spin" />
+          <span>Generating response...</span>
+          <Button variant="outline" onClick={cancelRequest}>
+            Cancel
+          </Button>
+        </div>
+      )}
+      <Textarea {...inputProps} />
     </div>
   )
 }
