@@ -4,7 +4,8 @@ import { useResponses } from './use-responses'
 import { Button } from '../ui/button'
 
 export function ResponsesChat() {
-  const { messages, inputProps, isLoading, cancelRequest } = useResponses()
+  const { messages, streamingMessage, inputProps, isLoading, cancelRequest } =
+    useResponses()
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -12,6 +13,7 @@ export function ResponsesChat() {
         {messages.map((message, index) => (
           <li key={index}>{message}</li>
         ))}
+        {streamingMessage && <li>AI: {streamingMessage}</li>}
       </ul>
       {isLoading && (
         <div className="flex items-center gap-2">

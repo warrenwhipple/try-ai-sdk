@@ -19,6 +19,7 @@ type ResponsesState = {
   isLoading: boolean
   responseId: string | null
   error: unknown
+  streamingMessage: string | null
 }
 
 const initialState: ResponsesState = {
@@ -27,16 +28,18 @@ const initialState: ResponsesState = {
   isLoading: false,
   responseId: null,
   error: null,
+  streamingMessage: '',
 }
 
 export function useResponses() {
   const [state, setState] = useState<ResponsesState>(initialState)
-  const abortControllerRef = useRef<AbortController>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
 
-  const onSubmit = (e?: React.FormEvent) => {
+  const onSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault()
     if (state.isLoading) return
     if (!state.inputValue.trim()) return
+
     abortControllerRef.current?.abort()
     abortControllerRef.current = new AbortController()
 
@@ -48,31 +51,81 @@ export function useResponses() {
       messages: [...prev.messages, `User: ${currentInputValue}`],
       isLoading: true,
       inputValue: '',
+      streamingMessage: '',
+      error: null,
     }))
 
-    getClient()
-      .responses.create({
+    try {
+      const stream = await getClient().responses.create({
         model: 'o4-mini',
         input: currentInputValue,
         previous_response_id: currentResponseId,
+        stream: true,
       })
-      .then((response) => {
+
+      let streamingMessage = ''
+
+      for await (const event of stream) {
+        if (abortControllerRef.current?.signal.aborted) break
+
+        switch (event.type) {
+          case 'response.created': {
+            const responseId = event.response.id
+            setState((prev) => ({ ...prev, responseId }))
+            break
+          }
+          case 'response.output_text.delta': {
+            streamingMessage += event.delta
+            setState((prev) => ({ ...prev, streamingMessage }))
+            break
+          }
+          case 'response.completed': {
+            setState((prev) => ({
+              ...prev,
+              messages: [...prev.messages, `AI: ${streamingMessage}`],
+              streamingMessage: null,
+              isLoading: false,
+            }))
+            break
+          }
+          case 'error': {
+            const error = event.message || 'Unknown error'
+            setState((prev) => ({
+              ...prev,
+              isLoading: false,
+              error,
+              streamingMessage: null,
+            }))
+            break
+          }
+        }
+      }
+
+      if (!abortControllerRef.current?.signal.aborted && streamingMessage) {
         setState((prev) => ({
           ...prev,
-          messages: [...prev.messages, `AI: ${response.output_text}`],
+          messages: [...prev.messages, `AI: ${streamingMessage}`],
           isLoading: false,
-          responseId: response.id,
-          error: null,
+          streamingMessage: null,
         }))
-      })
-      .catch((error: unknown) => {
-        if (error instanceof Error && error.name === 'AbortError') return
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'AbortError') {
         setState((prev) => ({
           ...prev,
           isLoading: false,
-          error: error ?? 'Unknown error',
+          streamingMessage: null,
         }))
-      })
+        return
+      }
+
+      setState((prev) => ({
+        ...prev,
+        isLoading: false,
+        error: error ?? 'Unknown error',
+        streamingMessage: null,
+      }))
+    }
   }
 
   const cancelRequest = () => {
@@ -81,11 +134,16 @@ export function useResponses() {
       setState((prev) => ({
         ...prev,
         isLoading: false,
+        streamingMessage: null,
       }))
     }
   }
 
-  useEffect(() => () => abortControllerRef.current?.abort(), [])
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort()
+    }
+  }, [])
 
   const onInputChange: React.ChangeEventHandler<
     HTMLInputElement | HTMLTextAreaElement
@@ -110,6 +168,7 @@ export function useResponses() {
     isLoading: state.isLoading,
     error: state.error,
     responseId: state.responseId,
+    streamingMessage: state.streamingMessage,
     onSubmit,
     cancelRequest,
     inputProps: {
