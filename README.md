@@ -8,7 +8,6 @@ A professional AI chatbot built with React, TypeScript, and Vite, featuring a po
 - 🤖 **OpenAI GPT-3.5 Turbo integration** via Vercel's AI SDK
 - ✨ **Rich message rendering** with markdown support
 - 📋 **Copy message functionality** with one-click copying
-- 🎙️ **Audio recording capabilities** (ready to extend)
 - 📎 **File attachment support** (ready to extend)
 - ⚡ **Auto-scroll and smooth animations**
 - 🎨 **Beautiful UI** with Tailwind CSS and Framer Motion

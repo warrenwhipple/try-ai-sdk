@@ -32,7 +32,6 @@ interface ChatPropsBase {
     rating: "thumbs-up" | "thumbs-down"
   ) => void
   setMessages?: (messages: any[]) => void
-  transcribeAudio?: (blob: Blob) => Promise<string>
 }
 
 export interface ChatPropsWithoutSuggestions extends ChatPropsBase {
@@ -59,7 +58,6 @@ export function Chat({
   className,
   onRateResponse,
   setMessages,
-  transcribeAudio,
 }: ChatProps) {
   const lastMessage = messages.at(-1)
   const isEmpty = messages.length === 0
@@ -223,7 +221,6 @@ export function Chat({
             setFiles={setFiles}
             stop={handleStop}
             isGenerating={isGenerating}
-            transcribeAudio={transcribeAudio}
           />
         )}
       </ChatForm>

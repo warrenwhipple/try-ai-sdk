@@ -57,7 +57,7 @@ This is a React + TypeScript + Vite application featuring a professional AI chat
 - **Main component**: Uses shadcn-chatbot-kit `Chat` component for professional UI
 - **Message handling**: Custom logic adapts AI SDK messages to chat-kit format
 - **State management**: Maintains messages, input, and loading states manually
-- **Extensible**: Ready for file attachments, audio recording, prompt suggestions
+- **Extensible**: Ready for file attachments, prompt suggestions
 
 ## Important Reminders and Conventions
 
