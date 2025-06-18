@@ -14,18 +14,16 @@ export function ChatPane() {
     stop,
   } = useChat({
     api: 'http://localhost:8787',
+    maxSteps: 8,
     body: {
-      model: 'o4-mini',
+      model: 'gpt-3.5-turbo',
       stream: true,
-      tools: { add_item: addItemTool },
+      tools: { addItem: addItemTool },
     },
     onToolCall: ({ toolCall }) => {
       try {
-        switch (toolCall.toolName.toLowerCase()) {
-          case 'add_item':
-          case 'add item':
-          case 'additem':
-          case 'add': {
+        switch (toolCall.toolName) {
+          case 'addItem': {
             const args = addItemSchema.parse(toolCall.args)
             useDocumentStore.getState().addItem(args.item)
             return {
